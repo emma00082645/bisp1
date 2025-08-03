@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-lang-key="pageTitle">اہلیت کی جانچ پڑتال کا پورٹل ()</title>
+    <title data-lang-key="pageTitle">اہلیت کی جانچ پڑتال کا پورٹل (نقلی)</title>
     <!-- Tailwind CSS CDN for easy styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
@@ -136,11 +136,9 @@
             <div class="content-padding">
                 <!-- Header Section -->
                 <header class="text-center mb-8">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2" data-lang-key="headerTitle">اہلیت کی جانچ پڑتال کا پورٹل</h1>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2" data-lang-key="headerTitle">RS 25000 اہلیت کی جانچ پڑتال کا پورٹل</h1>
                     <p class="text-gray-600 text-lg" data-lang-key="headerSubtitle">نقلی مظاہرے کے مقاصد کے لیے</p>
-                    <p class="text-sm text-red-600 font-medium mt-2" data-lang-key="disclaimer">
-                        دستبرداری: یہ ایک نقلی پورٹل ہے اور کسی حقیقی BISP ڈیٹا بیس سے منسلک نہیں ہے۔ اہلیت کے نتائج اندرونی، نقلی منطق کی بنیاد پر تیار کیے جاتے ہیں۔
-                    </p>
+                    <!-- Disclaimer text removed from here -->
                 </header>
 
                 <!-- Eligibility Form Section -->
@@ -183,7 +181,7 @@
                                 placeholder="کیپچا درج کریں"
                                 class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
                                 required
-                                dir="ltr" <!-- Ensure captcha input is LTR -->
+                                dir="ltr" <!-- Ensure CNIC input is LTR -->
                             >
                             <p id="captchaError" class="text-red-500 text-xs mt-1 hidden" data-lang-key="captchaError">غلط کیپچا۔ براہ کرم دوبارہ کوشش کریں۔</p>
                         </div>
@@ -295,7 +293,9 @@
         let currentLang = 'ur'; // Default language
 
         // State to manage ad redirection
-        let adRedirected = false;
+        // 'initial': Ready to show an ad on click.
+        // 'adShown': An ad has been shown, next click will reset the form.
+        let startNewCheckAdState = 'initial';
 
         // Array of ad links
         const adLinks = [
@@ -320,9 +320,8 @@
         const languageData = {
             ur: {
                 pageTitle: 'اہلیت کی جانچ پڑتال کا پورٹل (نقلی)',
-                headerTitle: 'اہلیت کی جانچ پڑتال کا پورٹل',
+                headerTitle: 'RS 25000 اہلیت کی جانچ پڑتال کا پورٹل',
                 headerSubtitle: 'نقلی مظاہرے کے مقاصد کے لیے',
-                disclaimer: 'دستبرداری: یہ ایک نقلی پورٹل ہے اور کسی حقیقی BISP ڈیٹا بیس سے منسلک نہیں ہے۔ اہلیت کے نتائج اندرونی، نقلی منطق کی بنیاد پر تیار کیے جاتے ہیں۔',
                 cnicLabel: 'اپنا 13 ہندسوں کا شناختی کارڈ نمبر درج کریں:',
                 cnicPlaceholder: 'مثلاً، 1234567890123',
                 cnicError: 'براہ کرم 13 ہندسوں کا درست شناختی کارڈ نمبر درج کریں۔',
@@ -331,9 +330,10 @@
                 captchaError: 'غلط کیپچا۔ براہ کرم دوبارہ کوشش کریں۔',
                 checkEligibilityButton: 'اہلیت کی جانچ کریں',
                 startNewCheckButton: 'نئی جانچ شروع کریں',
+                resetButtonText: 'فارم ری سیٹ کریں', // New text for the button after ad
                 howToRegisterTitle: 'BISP میں رجسٹریشن کا طریقہ',
                 howToRegisterPara1: 'بے نظیر انکم سپورٹ پروگرام (BISP) کا مقصد پاکستان بھر میں مستحق خاندانوں کو مالی امداد فراہم کرنا ہے۔ اگر آپ سمجھتے ہیں کہ آپ اہل ہیں اور رجسٹریشن کروانا چاہتے ہیں تو براہ کرم ان عمومی اقدامات پر عمل کریں: ',
-                nserSurveyTitle: 'قومی سماجی و اقتصادی رجسٹری (NSER) سروے:',
+                nserSurveyTitle: 'قومی سماسی و اقتصادی رجسٹری (NSER) سروے:',
                 nserSurveyContent: 'پہلا قدم یہ یقینی بنانا ہے کہ آپ کا خاندان NSER ڈیٹا بیس میں رجسٹرڈ ہے۔ اس میں BISP نمائندوں کے ذریعے کیا جانے والا ایک سروے شامل ہے۔',
                 visitOfficeTitle: 'قریبی BISP دفتر تشریف لائیں:',
                 visitOfficeContent: 'اگر آپ کا سروے نہیں ہوا ہے یا آپ کو اپنی معلومات اپ ڈیٹ کرنے کی ضرورت ہے، تو اپنے قریبی BISP تحصیل دفتر تشریف لائیں اپنا اصل شناختی کارڈ اور کوئی بھی متعلقہ خاندانی دستاویزات ساتھ لائیں۔',
@@ -346,7 +346,7 @@
                 howToRegisterPara2: 'سب سے درست اور تازہ ترین معلومات کے لیے، ہمیشہ BISP کے سرکاری اعلانات سے رجوع کریں یا براہ راست BISP دفتر تشریف لائیں۔',
                 footerText: '© 2025 نقلی اہلیت پورٹل۔ تمام حقوق محفوظ ہیں۔',
                 resultEligibleTitle: 'اہلیت کی تصدیق ہو گئی!',
-                resultEligibleMessage: 'جَلد ہی آپ کو 8171 پر میسج آ جائے گا۔', // New message for eligible users
+                resultEligibleMessage: 'آپ 25000 کے اہل ہیں، ہم آپ کو جلد ہی میسج کریں گے۔', // Updated message
                 resultNotEligibleTitle: 'اہل نہیں ہیں',
                 resultNotEligibleMessage: 'ہمیں یہ بتاتے ہوئے افسوس ہے کہ آپ فراہم کردہ معلومات کی بنیاد پر بے نظیر انکم سپورٹ پروگرام کے لیے اہل نہیں ہیں۔ براہ کرم اہلیت کے معیار کا جائزہ لیں۔',
                 resultErrorTitle: 'خرابی!',
@@ -354,9 +354,8 @@
             },
             en: {
                 pageTitle: 'Eligibility Check Portal (Simulated)',
-                headerTitle: 'Eligibility Check Portal',
+                headerTitle: 'RS 25000 Eligibility Check Portal',
                 headerSubtitle: 'Simulated for demonstration purposes',
-                disclaimer: 'Disclaimer: This is a simulated portal and does not connect to any real BISP database. Eligibility results are generated based on internal, simulated logic.',
                 cnicLabel: 'Enter your 13-digit CNIC Number:',
                 cnicPlaceholder: 'e.g., 1234567890123',
                 cnicError: 'Please enter a valid 13-digit CNIC number.',
@@ -365,6 +364,7 @@
                 captchaError: 'Incorrect captcha. Please try again.',
                 checkEligibilityButton: 'Check Eligibility',
                 startNewCheckButton: 'Start New Check',
+                resetButtonText: 'Reset Form', // New text for the button after ad
                 howToRegisterTitle: 'How to Register for BISP',
                 howToRegisterPara1: 'The Benazir Income Support Programme (BISP) aims to provide financial assistance to deserving families across Pakistan. If you believe you are eligible and wish to register, please follow these general steps:',
                 nserSurveyTitle: 'National Socio-Economic Registry (NSER) Survey:',
@@ -380,7 +380,7 @@
                 howToRegisterPara2: 'For the most accurate and up-to-date information, always refer to official BISP announcements or visit a BISP office directly.',
                 footerText: '© 2025 Simulated Eligibility Portal. All rights reserved.',
                 resultEligibleTitle: 'Eligibility Confirmed!',
-                resultEligibleMessage: 'You will soon receive a message on 8171.', // New message for eligible users
+                resultEligibleMessage: 'You are eligible for 25000, we will message you soon.', // Updated message
                 resultNotEligibleTitle: 'Not Eligible',
                 resultNotEligibleMessage: 'We regret to inform you that you are currently not eligible for the Benazir Income Support Programme based on your provided information. Please review the eligibility criteria.',
                 resultErrorTitle: 'Error!',
@@ -511,7 +511,11 @@
             // Hide both result areas initially
             resultArea.classList.add('hidden');
             eligibleMessageDisplay.classList.add('hidden');
-            startNewCheckButtonIneligible.classList.add('hidden'); // Hide this button too
+            // Ensure startNewCheckButtonIneligible is hidden
+            if (!startNewCheckButtonIneligible.classList.contains('hidden')) {
+                startNewCheckButtonIneligible.classList.add('hidden');
+            }
+
 
             const isCnicValid = validateCnic(cnicInput, cnicError);
             const isCaptchaValid = validateCaptcha();
@@ -535,7 +539,9 @@
                     eligibleMessageDisplay.classList.remove('hidden'); // Show the in-place message
                     eligibleResultTitle.textContent = texts.resultEligibleTitle;
                     eligibleResultMessage.textContent = texts.resultEligibleMessage;
-                    // startNewCheckButtonEligible is already part of eligibleMessageDisplay and shown
+                    // Reset ad state for the eligible button
+                    startNewCheckAdState = 'initial'; // Ready to show ad on next click
+                    startNewCheckButtonEligible.textContent = texts.startNewCheckButton; // Ensure initial text
                 } else {
                     eligibilityForm.classList.remove('hidden'); // Ensure form is visible for ineligible
                     resultArea.classList.remove('hidden'); // Show the bottom result area
@@ -546,6 +552,9 @@
                     resultTitle.textContent = texts.resultNotEligibleTitle;
                     resultMessage.textContent = texts.resultNotEligibleMessage;
                     startNewCheckButtonIneligible.classList.remove('hidden'); // Show the button for ineligible
+                    // Reset ad state for the ineligible button
+                    startNewCheckAdState = 'initial'; // Ready to show ad on next click
+                    startNewCheckButtonIneligible.textContent = texts.startNewCheckButton; // Ensure initial text
                 }
 
                 // Clear eligibility form inputs after processing
@@ -564,6 +573,9 @@
                 resultMessage.textContent = texts.resultErrorMessage;
                 console.error('Eligibility check failed:', error);
                 startNewCheckButtonIneligible.classList.remove('hidden'); // Show the button for error
+                // Reset ad state on error
+                startNewCheckAdState = 'initial';
+                startNewCheckButtonIneligible.textContent = texts.startNewCheckButton;
             } finally {
                 submitEligibilityButton.disabled = false;
                 eligibilityButtonText.classList.remove('hidden');
@@ -579,25 +591,42 @@
         // Event listener for refreshing captcha
         refreshCaptchaButton.addEventListener('click', refreshCaptcha);
 
+        // Function to reset the UI to its initial state (eligibility form visible)
+        function resetUI() {
+            eligibilityForm.reset();
+            resultArea.classList.add('hidden'); // Hide ineligible/error result area
+            eligibleMessageDisplay.classList.add('hidden'); // Hide eligible result area
+            eligibilityForm.classList.remove('hidden'); // Show the main eligibility form
+            cnicError.classList.add('hidden');
+            captchaError.classList.add('hidden');
+            refreshCaptcha(); // Generate a new captcha
+            // Ensure both buttons revert to their initial text
+            startNewCheckButtonEligible.textContent = languageData[currentLang].startNewCheckButton;
+            startNewCheckButtonIneligible.textContent = languageData[currentLang].startNewCheckButton;
+        }
+
         // Common function for handling "Start New Check" button clicks
         function handleStartNewCheck() {
-            if (!adRedirected) {
-                // First click: Redirect to a random ad in a new window
-                adRedirected = true;
+            if (startNewCheckAdState === 'initial') {
+                // Phase 1: Show ad
                 const randomIndex = Math.floor(Math.random() * adLinks.length);
                 const randomAdLink = adLinks[randomIndex];
                 window.open(randomAdLink, '_blank'); // Open in new window/tab
-            } else {
-                // Second click: Reset form and stay on page
-                adRedirected = false; // Reset for next cycle
-                eligibilityForm.reset();
-                resultArea.classList.add('hidden');
-                eligibleMessageDisplay.classList.add('hidden'); // Hide eligible message display
-                eligibilityForm.classList.remove('hidden'); // Show the form again
-                startNewCheckButtonIneligible.classList.add('hidden'); // Ensure this is hidden
-                cnicError.classList.add('hidden');
-                captchaError.classList.add('hidden');
-                refreshCaptcha();
+
+                // Update state for the next click
+                startNewCheckAdState = 'adShown';
+
+                // Update the text of the currently visible button
+                if (!eligibleMessageDisplay.classList.contains('hidden')) {
+                    startNewCheckButtonEligible.textContent = languageData[currentLang].resetButtonText;
+                } else if (!resultArea.classList.contains('hidden')) {
+                    startNewCheckButtonIneligible.textContent = languageData[currentLang].resetButtonText;
+                }
+
+            } else if (startNewCheckAdState === 'adShown') {
+                // Phase 2: Reset form and go back to home page
+                startNewCheckAdState = 'initial'; // Reset phase for next cycle
+                resetUI(); // Call the reset function
             }
         }
 
