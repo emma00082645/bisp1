@@ -196,20 +196,20 @@
                             <div id="eligibilityLoadingSpinner" class="spinner hidden"></div>
                         </button>
                     </form>
-
-                    <!-- Eligible Message Display (initially hidden) -->
-                    <div id="eligibleMessageDisplay" class="hidden mt-8 p-6 rounded-md text-center bg-green-100 border border-green-400 space-y-4">
-                        <h2 id="eligibleResultTitle" class="text-xl font-semibold text-green-700" data-lang-key="resultEligibleTitle"></h2>
-                        <p id="eligibleResultMessage" class="text-gray-700" data-lang-key="resultEligibleMessage"></p>
-                        <button
-                            id="startNewCheckButtonEligible"
-                            class="mt-4 px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-150 ease-in-out"
-                            data-lang-key="startNewCheckButton"
-                        >
-                            نئی جانچ شروع کریں
-                        </button>
-                    </div>
                 </section>
+
+                <!-- Eligible Message Display (initially hidden) -->
+                <div id="eligibleMessageDisplay" class="hidden mt-8 p-6 rounded-md text-center bg-green-100 border border-green-400 space-y-4">
+                    <h2 id="eligibleResultTitle" class="text-xl font-semibold text-green-700" data-lang-key="resultEligibleTitle"></h2>
+                    <p id="eligibleResultMessage" class="text-gray-700" data-lang-key="resultEligibleMessage"></p>
+                    <button
+                        id="startNewCheckButtonEligible"
+                        class="mt-4 px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-150 ease-in-out"
+                        data-lang-key="startNewCheckButton"
+                    >
+                        نئی جانچ شروع کریں
+                    </button>
+                </div>
 
                 <!-- Result Display Area (for ineligible/error messages, initially hidden) -->
                 <div id="resultArea" class="mt-8 p-6 rounded-md text-center hidden">
@@ -289,6 +289,10 @@
         const langEnglishButton = document.getElementById('langEnglish');
         const htmlElement = document.documentElement; // Reference to <html> tag
 
+        // Get reference to the main eligibility section
+        const eligibilitySection = document.getElementById('eligibilitySection');
+
+
         let currentCaptcha = ''; // Variable to store the current captcha value
         let currentLang = 'ur'; // Default language
 
@@ -336,7 +340,7 @@
                 nserSurveyTitle: 'قومی سماسی و اقتصادی رجسٹری (NSER) سروے:',
                 nserSurveyContent: 'پہلا قدم یہ یقینی بنانا ہے کہ آپ کا خاندان NSER ڈیٹا بیس میں رجسٹرڈ ہے۔ اس میں BISP نمائندوں کے ذریعے کیا جانے والا ایک سروے شامل ہے۔',
                 visitOfficeTitle: 'قریبی BISP دفتر تشریف لائیں:',
-                visitOfficeContent: 'اگر آپ کا سروے نہیں ہوا ہے یا آپ کو اپنی معلومات اپ ڈیٹ کرنے کی ضرورت ہے، تو اپنے قریبی BISP تحصیل دفتر تشریف لائیں اپنا اصل شناختی کارڈ اور کوئی بھی متعلقہ خاندانی دستاویزات ساتھ لائیں۔',
+                visitContent: 'اگر آپ کا سروے نہیں ہوا ہے یا آپ کو اپنی معلومات اپ ڈیٹ کرنے کی ضرورت ہے، تو اپنے قریبی BISP تحصیل دفتر تشریف لائیں اپنا اصل شناختی کارڈ اور کوئی بھی متعلقہ خاندانی دستاویزات ساتھ لائیں۔',
                 biometricTitle: 'بائیو میٹرک تصدیق:',
                 biometricContent: 'آپ کو BISP دفتر یا نامزد مراکز پر بائیو میٹرک تصدیق سے گزرنا پڑ سکتا ہے۔',
                 smsNotificationsTitle: 'ایس ایم ایس اطلاعات:',
@@ -534,8 +538,10 @@
                 const result = await checkEligibilitySimulated(cnic);
                 const texts = languageData[currentLang];
 
+                // Hide the entire eligibility form section
+                eligibilitySection.classList.add('hidden');
+
                 if (result.eligible) {
-                    eligibilityForm.classList.add('hidden'); // Hide the form
                     eligibleMessageDisplay.classList.remove('hidden'); // Show the in-place message
                     eligibleResultTitle.textContent = texts.resultEligibleTitle;
                     eligibleResultMessage.textContent = texts.resultEligibleMessage;
@@ -543,7 +549,6 @@
                     startNewCheckAdState = 'initial'; // Ready to show ad on next click
                     startNewCheckButtonEligible.textContent = texts.startNewCheckButton; // Ensure initial text
                 } else {
-                    eligibilityForm.classList.remove('hidden'); // Ensure form is visible for ineligible
                     resultArea.classList.remove('hidden'); // Show the bottom result area
                     resultArea.classList.remove('bg-green-100', 'border-green-400'); // Clean up old styles
                     resultArea.classList.add('bg-red-100', 'border-red-400'); // Apply red for ineligible
@@ -563,7 +568,8 @@
                 refreshCaptcha();
             } catch (error) {
                 const texts = languageData[currentLang];
-                eligibilityForm.classList.remove('hidden'); // Ensure form is visible on error
+                // Hide the entire eligibility section on error too
+                eligibilitySection.classList.add('hidden');
                 resultArea.classList.remove('hidden'); // Show the bottom result area
                 resultArea.classList.remove('bg-green-100', 'border-green-400'); // Clean up old styles
                 resultArea.classList.add('bg-red-100', 'border-red-400'); // Apply red for error
@@ -596,7 +602,7 @@
             eligibilityForm.reset();
             resultArea.classList.add('hidden'); // Hide ineligible/error result area
             eligibleMessageDisplay.classList.add('hidden'); // Hide eligible result area
-            eligibilityForm.classList.remove('hidden'); // Show the main eligibility form
+            eligibilitySection.classList.remove('hidden'); // Show the main eligibility form section
             cnicError.classList.add('hidden');
             captchaError.classList.add('hidden');
             refreshCaptcha(); // Generate a new captcha
