@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-lang-key="pageTitle">اہلیت کی جانچ پڑتال کا پورٹل (نقلی)</title>
+    <title data-lang-key="pageTitle">اہلیت کی جانچ پڑتال کا پورٹل ()</title>
     <!-- Tailwind CSS CDN for easy styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
@@ -198,14 +198,27 @@
                             <div id="eligibilityLoadingSpinner" class="spinner hidden"></div>
                         </button>
                     </form>
+
+                    <!-- Eligible Message Display (initially hidden) -->
+                    <div id="eligibleMessageDisplay" class="hidden mt-8 p-6 rounded-md text-center bg-green-100 border border-green-400 space-y-4">
+                        <h2 id="eligibleResultTitle" class="text-xl font-semibold text-green-700" data-lang-key="resultEligibleTitle"></h2>
+                        <p id="eligibleResultMessage" class="text-gray-700" data-lang-key="resultEligibleMessage"></p>
+                        <button
+                            id="startNewCheckButtonEligible"
+                            class="mt-4 px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-150 ease-in-out"
+                            data-lang-key="startNewCheckButton"
+                        >
+                            نئی جانچ شروع کریں
+                        </button>
+                    </div>
                 </section>
 
-                <!-- Result Display Area -->
+                <!-- Result Display Area (for ineligible/error messages, initially hidden) -->
                 <div id="resultArea" class="mt-8 p-6 rounded-md text-center hidden">
                     <h2 id="resultTitle" class="text-xl font-semibold mb-2"></h2>
                     <p id="resultMessage" class="text-gray-700"></p>
                     <button
-                        id="startNewCheckButton"
+                        id="startNewCheckButtonIneligible"
                         class="mt-4 px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-150 ease-in-out hidden"
                         data-lang-key="startNewCheckButton"
                     >
@@ -224,7 +237,7 @@
                             <strong data-lang-key="nserSurveyTitle">قومی سماجی و اقتصادی رجسٹری (NSER) سروے:</strong> <span data-lang-key="nserSurveyContent">پہلا قدم یہ یقینی بنانا ہے کہ آپ کا خاندان NSER ڈیٹا بیس میں رجسٹرڈ ہے۔ اس میں BISP نمائندوں کے ذریعے کیا جانے والا ایک سروے شامل ہے۔</span>
                         </li>
                         <li>
-                            <strong data-lang-key="visitOfficeTitle">قریبی BISP دفتر تشریف لائیں:</strong> <span data-lang-key="visitOfficeContent">اگر آپ کا سروے نہیں ہوا ہے یا آپ کو اپنی معلومات اپ ڈیٹ کرنے کی ضرورت ہے، تو اپنے قریبی BISP تحصیل دفتر تشریف لائیں۔ اپنا اصل شناختی کارڈ اور کوئی بھی متعلقہ خاندانی دستاویزات ساتھ لائیں۔</span>
+                            <strong data-lang-key="visitOfficeTitle">قریبی BISP دفتر تشریف لائیں:</strong> <span data-lang-key="visitOfficeContent">اگر آپ کا سروے نہیں ہوا ہے یا آپ کو اپنی معلومات اپ ڈیٹ کرنے کی ضرورت ہے، تو اپنے قریبی BISP تحصیل دفتر تشریف لائیں اپنا اصل شناختی کارڈ اور کوئی بھی متعلقہ خاندانی دستاویزات ساتھ لائیں۔</span>
                         </li>
                         <li>
                             <strong data-lang-key="biometricTitle">بائیو میٹرک تصدیق:</strong> <span data-lang-key="biometricContent">آپ کو BISP دفتر یا نامزد مراکز پر بائیو میٹرک تصدیق سے گزرنا پڑ سکتا ہے۔</span>
@@ -262,10 +275,18 @@
         const eligibilityButtonText = document.getElementById('eligibilityButtonText');
         const eligibilityLoadingSpinner = document.getElementById('eligibilityLoadingSpinner');
 
+        // New elements for in-place eligible message
+        const eligibleMessageDisplay = document.getElementById('eligibleMessageDisplay');
+        const eligibleResultTitle = document.getElementById('eligibleResultTitle');
+        const eligibleResultMessage = document.getElementById('eligibleResultMessage');
+        const startNewCheckButtonEligible = document.getElementById('startNewCheckButtonEligible');
+
+        // Existing elements for ineligible/error messages
         const resultArea = document.getElementById('resultArea');
         const resultTitle = document.getElementById('resultTitle');
         const resultMessage = document.getElementById('resultMessage');
-        const startNewCheckButton = document.getElementById('startNewCheckButton');
+        const startNewCheckButtonIneligible = document.getElementById('startNewCheckButtonIneligible'); // Renamed for clarity
+
         const langUrduButton = document.getElementById('langUrdu');
         const langEnglishButton = document.getElementById('langEnglish');
         const htmlElement = document.documentElement; // Reference to <html> tag
@@ -487,8 +508,10 @@
         eligibilityForm.addEventListener('submit', async (event) => {
             event.preventDefault();
 
+            // Hide both result areas initially
             resultArea.classList.add('hidden');
-            startNewCheckButton.classList.add('hidden');
+            eligibleMessageDisplay.classList.add('hidden');
+            startNewCheckButtonIneligible.classList.add('hidden'); // Hide this button too
 
             const isCnicValid = validateCnic(cnicInput, cnicError);
             const isCaptchaValid = validateCaptcha();
@@ -507,23 +530,22 @@
                 const result = await checkEligibilitySimulated(cnic);
                 const texts = languageData[currentLang];
 
-                resultArea.classList.remove('hidden');
-
-                resultArea.classList.remove('bg-green-100', 'border-green-400', 'bg-red-100', 'border-red-400');
-                resultTitle.classList.remove('text-green-700', 'text-red-700');
-
                 if (result.eligible) {
-                    resultArea.classList.add('bg-green-100', 'border-green-400');
-                    resultTitle.classList.add('text-green-700');
-                    resultTitle.textContent = texts.resultEligibleTitle;
-                    resultMessage.textContent = texts.resultEligibleMessage; // Display new message
-                    startNewCheckButton.classList.remove('hidden'); // Show new check button
+                    eligibilityForm.classList.add('hidden'); // Hide the form
+                    eligibleMessageDisplay.classList.remove('hidden'); // Show the in-place message
+                    eligibleResultTitle.textContent = texts.resultEligibleTitle;
+                    eligibleResultMessage.textContent = texts.resultEligibleMessage;
+                    // startNewCheckButtonEligible is already part of eligibleMessageDisplay and shown
                 } else {
-                    resultArea.classList.add('bg-red-100', 'border-red-400');
-                    resultTitle.classList.add('text-red-700');
+                    eligibilityForm.classList.remove('hidden'); // Ensure form is visible for ineligible
+                    resultArea.classList.remove('hidden'); // Show the bottom result area
+                    resultArea.classList.remove('bg-green-100', 'border-green-400'); // Clean up old styles
+                    resultArea.classList.add('bg-red-100', 'border-red-400'); // Apply red for ineligible
+                    resultTitle.classList.remove('text-green-700'); // Clean up old styles
+                    resultTitle.classList.add('text-red-700'); // Apply red for ineligible
                     resultTitle.textContent = texts.resultNotEligibleTitle;
                     resultMessage.textContent = texts.resultNotEligibleMessage;
-                    startNewCheckButton.classList.remove('hidden'); // Show new check button
+                    startNewCheckButtonIneligible.classList.remove('hidden'); // Show the button for ineligible
                 }
 
                 // Clear eligibility form inputs after processing
@@ -532,13 +554,16 @@
                 refreshCaptcha();
             } catch (error) {
                 const texts = languageData[currentLang];
-                resultArea.classList.remove('hidden');
-                resultArea.classList.add('bg-red-100', 'border-red-400');
-                resultTitle.classList.add('text-red-700');
+                eligibilityForm.classList.remove('hidden'); // Ensure form is visible on error
+                resultArea.classList.remove('hidden'); // Show the bottom result area
+                resultArea.classList.remove('bg-green-100', 'border-green-400'); // Clean up old styles
+                resultArea.classList.add('bg-red-100', 'border-red-400'); // Apply red for error
+                resultTitle.classList.remove('text-green-700'); // Clean up old styles
+                resultTitle.classList.add('text-red-700'); // Apply red for error
                 resultTitle.textContent = texts.resultErrorTitle;
                 resultMessage.textContent = texts.resultErrorMessage;
                 console.error('Eligibility check failed:', error);
-                startNewCheckButton.classList.remove('hidden');
+                startNewCheckButtonIneligible.classList.remove('hidden'); // Show the button for error
             } finally {
                 submitEligibilityButton.disabled = false;
                 eligibilityButtonText.classList.remove('hidden');
@@ -554,8 +579,8 @@
         // Event listener for refreshing captcha
         refreshCaptchaButton.addEventListener('click', refreshCaptcha);
 
-        // Event listener for starting a new check (resets all forms and hides results)
-        startNewCheckButton.addEventListener('click', () => {
+        // Common function for handling "Start New Check" button clicks
+        function handleStartNewCheck() {
             if (!adRedirected) {
                 // First click: Redirect to a random ad in a new window
                 adRedirected = true;
@@ -567,12 +592,19 @@
                 adRedirected = false; // Reset for next cycle
                 eligibilityForm.reset();
                 resultArea.classList.add('hidden');
-                startNewCheckButton.classList.add('hidden');
+                eligibleMessageDisplay.classList.add('hidden'); // Hide eligible message display
+                eligibilityForm.classList.remove('hidden'); // Show the form again
+                startNewCheckButtonIneligible.classList.add('hidden'); // Ensure this is hidden
                 cnicError.classList.add('hidden');
                 captchaError.classList.add('hidden');
                 refreshCaptcha();
             }
-        });
+        }
+
+        // Event listeners for both "Start New Check" buttons
+        startNewCheckButtonEligible.addEventListener('click', handleStartNewCheck);
+        startNewCheckButtonIneligible.addEventListener('click', handleStartNewCheck);
+
 
         // Initialize content and captcha on page load
         window.onload = async () => {
