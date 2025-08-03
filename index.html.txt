@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl"> <!-- Default to Urdu, right-to-left direction -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang-key="pageTitle">اہلیت کی جانچ پڑتال کا پورٹل (نقلی)</title>
+    <!-- Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for the Inter font (English) and Noto Nastaliq Urdu (Urdu) */
+        body {
+            font-family: 'Noto Nastaliq Urdu', 'Inter', sans-serif; /* Prioritize Urdu font */
+            background-color: #f0f2f5; /* Light gray background */
+            display: flex;
+            flex-direction: column; /* Allow content to stack vertically */
+            justify-content: flex-start; /* Align content to the top */
+            align-items: center;
+            min-height: 100vh; /* Full viewport height */
+            margin: 0;
+            padding: 0; /* Remove body padding, add to container */
+            box-sizing: border-box;
+        }
+        /* Style for the top navigation bar */
+        .top-nav {
+            width: 100%;
+            background-color: #1a202c; /* Dark background for the top bar */
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: flex-end; /* Align language buttons to the right */
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 20; /* Ensure it's above other content */
+        }
+        .lang-button {
+            background-color: #4a5568; /* Slightly lighter dark for buttons */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            margin-left: 0.5rem; /* Space between buttons for LTR */
+            margin-right: 0; /* No margin right for LTR */
+        }
+        html[dir="rtl"] .lang-button {
+            margin-left: 0; /* No margin left for RTL */
+            margin-right: 0.5rem; /* Space between buttons for RTL */
+        }
+        .lang-button:hover {
+            background-color: #2d3748;
+        }
+        .lang-button.active {
+            background-color: #3b82f6; /* Active language button color */
+        }
+
+        /* Style for the main container to ensure it looks good on all screens */
+        .container {
+            max-width: 600px; /* Increased max width for more content */
+            width: 100%; /* Full width on smaller screens */
+            background-color: #ffffff;
+            padding: 0; /* Remove container padding for full-width image */
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem; /* Space from the top nav */
+            margin-bottom: 2rem; /* Space at the bottom */
+            overflow: hidden; /* Ensures image corners respect container border-radius */
+        }
+        /* Styling for the captcha text to make it clear */
+        .captcha-text {
+            font-size: 1.25rem; /* Larger font size */
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #4a5568; /* Darker gray color */
+            background-color: #e2e8f0; /* Light background for captcha */
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            user-select: none; /* Prevent selection of captcha text */
+            display: inline-block;
+            min-width: 100px;
+            text-align: center;
+            direction: ltr; /* Ensure captcha text is LTR */
+        }
+        /* Styling for the loading spinner */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #3b82f6; /* Blue spinner */
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 0.5rem; /* Space for LTR */
+            margin-right: 0; /* No margin right for LTR */
+        }
+        html[dir="rtl"] .spinner {
+            margin-left: 0; /* No margin left for RTL */
+            margin-right: 0.5rem; /* Space for RTL */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Styles for the banner image */
+        .banner-image {
+            width: 100%; /* Full width of its container */
+            height: 150px; /* Fixed height for the banner */
+            object-fit: cover; /* Cover the area, cropping if necessary */
+            border-top-left-radius: 1rem; /* Match container's top-left radius */
+            border-top-right-radius: 1rem; /* Match container's top-right radius */
+        }
+        /* Padding for the content inside the container, below the banner */
+        .content-padding {
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Main Content Wrapper -->
+    <div id="mainContentWrapper" class="flex flex-col items-center w-full">
+        <!-- Top Navigation Bar for Language Selection -->
+        <div class="top-nav">
+            <button id="langUrdu" class="lang-button active" data-lang="ur">اردو</button>
+            <button id="langEnglish" class="lang-button" data-lang="en">English</button>
+        </div>
+
+        <div class="container">
+            <!-- Banner Image -->
+            <img src="https://www.inp.net.pk/images/20221209144118_original_16.webp"
+                 alt="Dress banner image"
+                 class="banner-image">
+
+            <div class="content-padding">
+                <!-- Header Section -->
+                <header class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2" data-lang-key="headerTitle">اہلیت کی جانچ پڑتال کا پورٹل</h1>
+                    <p class="text-gray-600 text-lg" data-lang-key="headerSubtitle">نقلی مظاہرے کے مقاصد کے لیے</p>
+                    <p class="text-sm text-red-600 font-medium mt-2" data-lang-key="disclaimer">
+                        دستبرداری: یہ ایک نقلی پورٹل ہے اور کسی حقیقی BISP ڈیٹا بیس سے منسلک نہیں ہے۔ اہلیت کے نتائج اندرونی، نقلی منطق کی بنیاد پر تیار کیے جاتے ہیں۔
+                    </p>
+                </header>
+
+                <!-- Eligibility Form Section -->
+                <section id="eligibilitySection">
+                    <form id="eligibilityForm" class="space-y-6">
+                        <!-- CNIC Input Field -->
+                        <div>
+                            <label for="cnic" class="block text-sm font-medium text-gray-700 mb-1" data-lang-key="cnicLabel">
+                                اپنا 13 ہندسوں کا شناختی کارڈ نمبر درج کریں:
+                            </label>
+                            <input
+                                type="text"
+                                id="cnic"
+                                name="cnic"
+                                placeholder="مثلاً، 1234567890123"
+                                maxlength="13"
+                                class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
+                                required
+                                dir="ltr" <!-- Ensure CNIC input is LTR -->
+                            >
+                            <p id="cnicError" class="text-red-500 text-xs mt-1 hidden" data-lang-key="cnicError">براہ کرم 13 ہندسوں کا درست شناختی کارڈ نمبر درج کریں۔</p>
+                        </div>
+
+                        <!-- Captcha Input Field -->
+                        <div>
+                            <label for="captchaInput" class="block text-sm font-medium text-gray-700 mb-1" data-lang-key="captchaLabel">
+                                نیچے دکھایا گیا کوڈ درج کریں:
+                            </label>
+                            <div class="flex items-center space-x-3">
+                                <span id="captchaDisplay" class="captcha-text"></span>
+                                <button type="button" id="refreshCaptcha" class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 transition duration-150 ease-in-out">
+                                    <!-- Refresh icon using inline SVG (Lucide React equivalent for web pages) -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-cw h-5 w-5 text-gray-600"><path d="M21 12a9 9 0 0 0-9-9V3a10 10 0 0 1 8.38 4.38L21 7V3"/><path d="M3 12a9 9 0 0 0 9 9V21a10 10 0 0 1-8.38-4.38L3 17V21"/></svg>
+                                </button>
+                            </div>
+                            <input
+                                type="text"
+                                id="captchaInput"
+                                name="captchaInput"
+                                placeholder="کیپچا درج کریں"
+                                class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
+                                required
+                                dir="ltr" <!-- Ensure captcha input is LTR -->
+                            >
+                            <p id="captchaError" class="text-red-500 text-xs mt-1 hidden" data-lang-key="captchaError">غلط کیپچا۔ براہ کرم دوبارہ کوشش کریں۔</p>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button
+                            type="submit"
+                            id="submitEligibilityButton"
+                            class="w-full flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out"
+                        >
+                            <span id="eligibilityButtonText" data-lang-key="checkEligibilityButton">اہلیت کی جانچ کریں</span>
+                            <div id="eligibilityLoadingSpinner" class="spinner hidden"></div>
+                        </button>
+                    </form>
+                </section>
+
+                <!-- Result Display Area -->
+                <div id="resultArea" class="mt-8 p-6 rounded-md text-center hidden">
+                    <h2 id="resultTitle" class="text-xl font-semibold mb-2"></h2>
+                    <p id="resultMessage" class="text-gray-700"></p>
+                    <button
+                        id="startNewCheckButton"
+                        class="mt-4 px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-150 ease-in-out hidden"
+                        data-lang-key="startNewCheckButton"
+                    >
+                        نئی جانچ شروع کریں
+                    </button>
+                </div>
+
+                <!-- How to Register Section -->
+                <section class="mt-10 p-6 bg-gray-50 rounded-xl shadow-inner border border-gray-200">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center" data-lang-key="howToRegisterTitle">BISP میں رجسٹریشن کا طریقہ</h2>
+                    <p class="text-gray-700 mb-4" data-lang-key="howToRegisterPara1">
+                        بے نظیر انکم سپورٹ پروگرام (BISP) کا مقصد پاکستان بھر میں مستحق خاندانوں کو مالی امداد فراہم کرنا ہے۔ اگر آپ سمجھتے ہیں کہ آپ اہل ہیں اور رجسٹریشن کروانا چاہتے ہیں تو براہ کرم ان عمومی اقدامات پر عمل کریں:
+                    </p>
+                    <ol class="list-decimal list-inside text-gray-700 space-y-2">
+                        <li>
+                            <strong data-lang-key="nserSurveyTitle">قومی سماجی و اقتصادی رجسٹری (NSER) سروے:</strong> <span data-lang-key="nserSurveyContent">پہلا قدم یہ یقینی بنانا ہے کہ آپ کا خاندان NSER ڈیٹا بیس میں رجسٹرڈ ہے۔ اس میں BISP نمائندوں کے ذریعے کیا جانے والا ایک سروے شامل ہے۔</span>
+                        </li>
+                        <li>
+                            <strong data-lang-key="visitOfficeTitle">قریبی BISP دفتر تشریف لائیں:</strong> <span data-lang-key="visitOfficeContent">اگر آپ کا سروے نہیں ہوا ہے یا آپ کو اپنی معلومات اپ ڈیٹ کرنے کی ضرورت ہے، تو اپنے قریبی BISP تحصیل دفتر تشریف لائیں۔ اپنا اصل شناختی کارڈ اور کوئی بھی متعلقہ خاندانی دستاویزات ساتھ لائیں۔</span>
+                        </li>
+                        <li>
+                            <strong data-lang-key="biometricTitle">بائیو میٹرک تصدیق:</strong> <span data-lang-key="biometricContent">آپ کو BISP دفتر یا نامزد مراکز پر بائیو میٹرک تصدیق سے گزرنا پڑ سکتا ہے۔</span>
+                        </li>
+                        <li>
+                            <strong data-lang-key="smsNotificationsTitle">ایس ایم ایس اطلاعات:</strong> <span data-lang-key="smsNotificationsContent">رجسٹریشن کے بعد، BISP اہم اپ ڈیٹس، بشمول اہلیت کی حیثیت اور ادائیگی کی تفصیلات، سرکاری 8171 شارٹ کوڈ سے ایس ایم ایس کے ذریعے بھیجتا ہے۔</span>
+                        </li>
+                        <li>
+                            <strong data-lang-key="eligibilityCriteriaTitle">اہلیت کا معیار:</strong> <span data-lang-key="eligibilityCriteriaContent">اہلیت کا تعین مختلف عوامل کی بنیاد پر کیا جاتا ہے، بشمول گھریلو آمدنی، اثاثے، اور خاندانی ڈھانچہ۔ سرکاری ملازمین یا نمایاں اثاثوں والے افراد عام طور پر اہل نہیں ہوتے۔</span>
+                        </li>
+                    </ol>
+                    <p class="text-gray-700 mt-4" data-lang-key="howToRegisterPara2">
+                        سب سے درست اور تازہ ترین معلومات کے لیے، ہمیشہ BISP کے سرکاری اعلانات سے رجوع کریں یا براہ راست BISP دفتر تشریف لائیں۔
+                    </p>
+                </section>
+            </main>
+        </div>
+
+        <!-- Footer Section -->
+        <footer class="text-center mt-8 text-gray-500 text-sm content-padding">
+            <p data-lang-key="footerText">© 2025 نقلی اہلیت پورٹل۔ تمام حقوق محفوظ ہیں۔</p>
+        </footer>
+    </div>
+
+    <script type="module">
+        // Get references to DOM elements
+        const cnicInput = document.getElementById('cnic');
+        const cnicError = document.getElementById('cnicError');
+        const captchaDisplay = document.getElementById('captchaDisplay');
+        const captchaInput = document.getElementById('captchaInput');
+        const captchaError = document.getElementById('captchaError');
+        const refreshCaptchaButton = document.getElementById('refreshCaptcha');
+        const eligibilityForm = document.getElementById('eligibilityForm');
+        const submitEligibilityButton = document.getElementById('submitEligibilityButton');
+        const eligibilityButtonText = document.getElementById('eligibilityButtonText');
+        const eligibilityLoadingSpinner = document.getElementById('eligibilityLoadingSpinner');
+
+        const resultArea = document.getElementById('resultArea');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultMessage = document.getElementById('resultMessage');
+        const startNewCheckButton = document.getElementById('startNewCheckButton');
+        const langUrduButton = document.getElementById('langUrdu');
+        const langEnglishButton = document.getElementById('langEnglish');
+        const htmlElement = document.documentElement; // Reference to <html> tag
+
+        let currentCaptcha = ''; // Variable to store the current captcha value
+        let currentLang = 'ur'; // Default language
+
+        // State to manage ad redirection
+        let adRedirected = false;
+
+        // Array of ad links
+        const adLinks = [
+            "https://otieu.com/4/9659248",
+            "https://www.profitableratecpm.com/v30v9iyyx?key=d7ca0b45aee9f9b8402f8dce202ab1ff",
+            "https://otieu.com/4/9659245",
+            "https://www.profitableratecpm.com/i3gkm6gh?key=d85966e00870fe9d565af06a993c1d9e",
+            "https://otieu.com/4/9378355",
+            "https://www.profitableratecpm.com/mwfredc1g?key=352c11e836bccc32c16e83a6e3e3eb42",
+            "https://otieu.com/4/9378356",
+            "https://www.profitableratecpm.com/w75hw3nx5e?key=06726dddc575e3d5ec11d133debb6c37",
+            "https://otieu.com/4/9378357",
+            "https://www.profitableratecpm.com/py814ag0x?key=6774792f284451a3c9c4a1598bcd0c21",
+            "https://otieu.com/4/9378358",
+            "https://www.profitableratecpm.com/aef3e7wx?key=c8b517a37404ebf6bc1d874634ba85b5",
+            "https://otieu.com/4/9659259",
+            "https://www.profitableratecpm.com/pz8jf02j?key=4764de412cc1f93516945aa64a0fa4a4",
+            "https://otieu.com/4/9659257"
+        ];
+
+        // Language data object
+        const languageData = {
+            ur: {
+                pageTitle: 'اہلیت کی جانچ پڑتال کا پورٹل (نقلی)',
+                headerTitle: 'اہلیت کی جانچ پڑتال کا پورٹل',
+                headerSubtitle: 'نقلی مظاہرے کے مقاصد کے لیے',
+                disclaimer: 'دستبرداری: یہ ایک نقلی پورٹل ہے اور کسی حقیقی BISP ڈیٹا بیس سے منسلک نہیں ہے۔ اہلیت کے نتائج اندرونی، نقلی منطق کی بنیاد پر تیار کیے جاتے ہیں۔',
+                cnicLabel: 'اپنا 13 ہندسوں کا شناختی کارڈ نمبر درج کریں:',
+                cnicPlaceholder: 'مثلاً، 1234567890123',
+                cnicError: 'براہ کرم 13 ہندسوں کا درست شناختی کارڈ نمبر درج کریں۔',
+                captchaLabel: 'نیچے دکھایا گیا کوڈ درج کریں:',
+                captchaPlaceholder: 'نمبروں والا کیپچا درج کریں',
+                captchaError: 'غلط کیپچا۔ براہ کرم دوبارہ کوشش کریں۔',
+                checkEligibilityButton: 'اہلیت کی جانچ کریں',
+                startNewCheckButton: 'نئی جانچ شروع کریں',
+                howToRegisterTitle: 'BISP میں رجسٹریشن کا طریقہ',
+                howToRegisterPara1: 'بے نظیر انکم سپورٹ پروگرام (BISP) کا مقصد پاکستان بھر میں مستحق خاندانوں کو مالی امداد فراہم کرنا ہے۔ اگر آپ سمجھتے ہیں کہ آپ اہل ہیں اور رجسٹریشن کروانا چاہتے ہیں تو براہ کرم ان عمومی اقدامات پر عمل کریں: ',
+                nserSurveyTitle: 'قومی سماجی و اقتصادی رجسٹری (NSER) سروے:',
+                nserSurveyContent: 'پہلا قدم یہ یقینی بنانا ہے کہ آپ کا خاندان NSER ڈیٹا بیس میں رجسٹرڈ ہے۔ اس میں BISP نمائندوں کے ذریعے کیا جانے والا ایک سروے شامل ہے۔',
+                visitOfficeTitle: 'قریبی BISP دفتر تشریف لائیں:',
+                visitOfficeContent: 'اگر آپ کا سروے نہیں ہوا ہے یا آپ کو اپنی معلومات اپ ڈیٹ کرنے کی ضرورت ہے، تو اپنے قریبی BISP تحصیل دفتر تشریف لائیں اپنا اصل شناختی کارڈ اور کوئی بھی متعلقہ خاندانی دستاویزات ساتھ لائیں۔',
+                biometricTitle: 'بائیو میٹرک تصدیق:',
+                biometricContent: 'آپ کو BISP دفتر یا نامزد مراکز پر بائیو میٹرک تصدیق سے گزرنا پڑ سکتا ہے۔',
+                smsNotificationsTitle: 'ایس ایم ایس اطلاعات:',
+                smsNotificationsContent: 'رجسٹریشن کے بعد، BISP اہم اپ ڈیٹس، بشمول اہلیت کی حیثیت اور ادائیگی کی تفصیلات، سرکاری 8171 شارٹ کوڈ سے ایس ایم ایس کے ذریعے بھیجتا ہے۔',
+                eligibilityCriteriaTitle: 'اہلیت کا معیار:',
+                eligibilityCriteriaContent: 'اہلیت کا تعین مختلف عوامل کی بنیاد پر کیا جاتا ہے، بشمول گھریلو آمدنی، اثاثے، اور خاندانی ڈھانچہ۔ سرکاری ملازمین یا نمایاں اثاثوں والے افراد عام طور پر اہل نہیں ہوتے۔',
+                howToRegisterPara2: 'سب سے درست اور تازہ ترین معلومات کے لیے، ہمیشہ BISP کے سرکاری اعلانات سے رجوع کریں یا براہ راست BISP دفتر تشریف لائیں۔',
+                footerText: '© 2025 نقلی اہلیت پورٹل۔ تمام حقوق محفوظ ہیں۔',
+                resultEligibleTitle: 'اہلیت کی تصدیق ہو گئی!',
+                resultEligibleMessage: 'جَلد ہی آپ کو 8171 پر میسج آ جائے گا۔', // New message for eligible users
+                resultNotEligibleTitle: 'اہل نہیں ہیں',
+                resultNotEligibleMessage: 'ہمیں یہ بتاتے ہوئے افسوس ہے کہ آپ فراہم کردہ معلومات کی بنیاد پر بے نظیر انکم سپورٹ پروگرام کے لیے اہل نہیں ہیں۔ براہ کرم اہلیت کے معیار کا جائزہ لیں۔',
+                resultErrorTitle: 'خرابی!',
+                resultErrorMessage: 'اہلیت کی جانچ پڑتال کے دوران ایک خرابی پیش آئی۔ براہ کرم دوبارہ کوشش کریں۔'
+            },
+            en: {
+                pageTitle: 'Eligibility Check Portal (Simulated)',
+                headerTitle: 'Eligibility Check Portal',
+                headerSubtitle: 'Simulated for demonstration purposes',
+                disclaimer: 'Disclaimer: This is a simulated portal and does not connect to any real BISP database. Eligibility results are generated based on internal, simulated logic.',
+                cnicLabel: 'Enter your 13-digit CNIC Number:',
+                cnicPlaceholder: 'e.g., 1234567890123',
+                cnicError: 'Please enter a valid 13-digit CNIC number.',
+                captchaLabel: 'Enter the code shown below:',
+                captchaPlaceholder: 'Enter numeric captcha',
+                captchaError: 'Incorrect captcha. Please try again.',
+                checkEligibilityButton: 'Check Eligibility',
+                startNewCheckButton: 'Start New Check',
+                howToRegisterTitle: 'How to Register for BISP',
+                howToRegisterPara1: 'The Benazir Income Support Programme (BISP) aims to provide financial assistance to deserving families across Pakistan. If you believe you are eligible and wish to register, please follow these general steps:',
+                nserSurveyTitle: 'National Socio-Economic Registry (NSER) Survey:',
+                nserSurveyContent: 'The primary step is to ensure your family is registered in the NSER database. This involves a survey conducted by BISP representatives.',
+                visitOfficeTitle: 'Visit Nearest BISP Office:',
+                visitOfficeContent: 'If you haven\'t been surveyed or need to update your information, visit your nearest BISP Tehsil office. Bring your original CNIC and any relevant family documents.',
+                biometricTitle: 'Biometric Verification:',
+                biometricContent: 'You may be required to undergo biometric verification at the BISP office or designated centers.',
+                smsNotificationsTitle: 'SMS Notifications:',
+                smsNotificationsContent: 'After registration, BISP communicates important updates, including eligibility status and payment details, via SMS from the official 8171 shortcode.',
+                eligibilityCriteriaTitle: 'Eligibility Criteria:',
+                eligibilityCriteriaContent: 'Eligibility is determined based on various factors, including household income, assets, and family structure. Government employees or individuals with significant assets are generally not eligible.',
+                howToRegisterPara2: 'For the most accurate and up-to-date information, always refer to official BISP announcements or visit a BISP office directly.',
+                footerText: '© 2025 Simulated Eligibility Portal. All rights reserved.',
+                resultEligibleTitle: 'Eligibility Confirmed!',
+                resultEligibleMessage: 'You will soon receive a message on 8171.', // New message for eligible users
+                resultNotEligibleTitle: 'Not Eligible',
+                resultNotEligibleMessage: 'We regret to inform you that you are currently not eligible for the Benazir Income Support Programme based on your provided information. Please review the eligibility criteria.',
+                resultErrorTitle: 'Error!',
+                resultErrorMessage: 'An error occurred while checking eligibility. Please try again.'
+            }
+        };
+
+        /**
+         * Updates the content of the page based on the selected language.
+         * @param {string} lang - The language code ('ur' or 'en').
+         */
+        function updateContent(lang) {
+            currentLang = lang;
+            const texts = languageData[lang];
+
+            // Update dir attribute for RTL/LTR
+            htmlElement.setAttribute('dir', lang === 'ur' ? 'rtl' : 'ltr');
+            htmlElement.setAttribute('lang', lang);
+
+            // Update all elements with data-lang-key
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (texts[key]) {
+                    element.textContent = texts[key];
+                }
+            });
+
+            // Update placeholders specifically
+            cnicInput.placeholder = texts.cnicPlaceholder;
+            captchaInput.placeholder = texts.captchaPlaceholder;
+
+            // Update active language button styling
+            langUrduButton.classList.remove('active');
+            langEnglishButton.classList.remove('active');
+            if (lang === 'ur') {
+                langUrduButton.classList.add('active');
+            } else {
+                langEnglishButton.classList.add('active');
+            }
+        }
+
+        /**
+         * Generates a random numeric captcha string.
+         * @param {number} length - The desired length of the captcha.
+         * @returns {string} The generated captcha string.
+         */
+        function generateCaptcha(length = 6) {
+            const characters = '0123456789'; // Only digits
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+
+        /**
+         * Displays a new captcha and clears the captcha input field.
+         */
+        function refreshCaptcha() {
+            currentCaptcha = generateCaptcha();
+            captchaDisplay.textContent = currentCaptcha;
+            captchaInput.value = ''; // Clear input when captcha refreshes
+            captchaError.classList.add('hidden'); // Hide error message
+        }
+
+        /**
+         * Validates the CNIC input.
+         * @param {HTMLInputElement} inputElement - The CNIC input field.
+         * @param {HTMLElement} errorElement - The error message element for CNIC.
+         * @returns {boolean} True if CNIC is valid, false otherwise.
+         */
+        function validateCnic(inputElement, errorElement) {
+            const cnicValue = inputElement.value.trim();
+            if (!/^\d{13}$/.test(cnicValue)) {
+                errorElement.classList.remove('hidden');
+                return false;
+            }
+            errorElement.classList.add('hidden');
+            return true;
+        }
+
+        /**
+         * Validates the captcha input.
+         * @returns {boolean} True if captcha is correct, false otherwise.
+         */
+        function validateCaptcha() {
+            const captchaInputValue = captchaInput.value.trim();
+            if (captchaInputValue !== currentCaptcha) {
+                captchaError.classList.remove('hidden');
+                return false;
+            }
+            captchaError.classList.add('hidden');
+            return true;
+        }
+
+        /**
+         * Simulates an API call to check eligibility with the specified logic.
+         * @param {string} cnic - The CNIC number (for simulation purposes).
+         * @returns {Promise<{eligible: boolean, message: string, status: string}>} A promise that resolves with eligibility status.
+         */
+        async function checkEligibilitySimulated(cnic) {
+            return new Promise(resolve => {
+                // Simulate network delay
+                setTimeout(() => {
+                    const lastDigit = parseInt(cnic.charAt(12), 10); // Get the last digit of CNIC
+                    const texts = languageData[currentLang]; // Get messages for current language
+
+                    let result = { eligible: false, message: "", status: "ineligible" };
+
+                    if (lastDigit % 2 === 0) { // If last digit is even (0, 2, 4, 6, 8)
+                        result.eligible = true;
+                        result.status = "eligible";
+                        result.message = texts.resultEligibleMessage;
+                    } else { // If last digit is odd (1, 3, 5, 7, 9)
+                        result.eligible = false;
+                        result.status = "ineligible";
+                        result.message = texts.resultNotEligibleMessage;
+                    }
+                    resolve(result);
+                }, 2000); // Simulate a 2-second delay
+            });
+        }
+
+        // Event listener for eligibility form submission
+        eligibilityForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            resultArea.classList.add('hidden');
+            startNewCheckButton.classList.add('hidden');
+
+            const isCnicValid = validateCnic(cnicInput, cnicError);
+            const isCaptchaValid = validateCaptcha();
+
+            if (!isCnicValid || !isCaptchaValid) {
+                return;
+            }
+
+            submitEligibilityButton.disabled = true;
+            eligibilityButtonText.classList.add('hidden');
+            eligibilityLoadingSpinner.classList.remove('hidden');
+            submitEligibilityButton.classList.add('opacity-70', 'cursor-not-allowed');
+
+            try {
+                const cnic = cnicInput.value.trim();
+                const result = await checkEligibilitySimulated(cnic);
+                const texts = languageData[currentLang];
+
+                resultArea.classList.remove('hidden');
+
+                resultArea.classList.remove('bg-green-100', 'border-green-400', 'bg-red-100', 'border-red-400');
+                resultTitle.classList.remove('text-green-700', 'text-red-700');
+
+                if (result.eligible) {
+                    resultArea.classList.add('bg-green-100', 'border-green-400');
+                    resultTitle.classList.add('text-green-700');
+                    resultTitle.textContent = texts.resultEligibleTitle;
+                    resultMessage.textContent = texts.resultEligibleMessage; // Display new message
+                    startNewCheckButton.classList.remove('hidden'); // Show new check button
+                } else {
+                    resultArea.classList.add('bg-red-100', 'border-red-400');
+                    resultTitle.classList.add('text-red-700');
+                    resultTitle.textContent = texts.resultNotEligibleTitle;
+                    resultMessage.textContent = texts.resultNotEligibleMessage;
+                    startNewCheckButton.classList.remove('hidden'); // Show new check button
+                }
+
+                // Clear eligibility form inputs after processing
+                cnicInput.value = '';
+                captchaInput.value = '';
+                refreshCaptcha();
+            } catch (error) {
+                const texts = languageData[currentLang];
+                resultArea.classList.remove('hidden');
+                resultArea.classList.add('bg-red-100', 'border-red-400');
+                resultTitle.classList.add('text-red-700');
+                resultTitle.textContent = texts.resultErrorTitle;
+                resultMessage.textContent = texts.resultErrorMessage;
+                console.error('Eligibility check failed:', error);
+                startNewCheckButton.classList.remove('hidden');
+            } finally {
+                submitEligibilityButton.disabled = false;
+                eligibilityButtonText.classList.remove('hidden');
+                eligibilityLoadingSpinner.classList.add('hidden');
+                submitEligibilityButton.classList.remove('opacity-70', 'cursor-not-allowed');
+            }
+        });
+
+        // Event listeners for language buttons
+        langUrduButton.addEventListener('click', () => updateContent('ur'));
+        langEnglishButton.addEventListener('click', () => updateContent('en'));
+
+        // Event listener for refreshing captcha
+        refreshCaptchaButton.addEventListener('click', refreshCaptcha);
+
+        // Event listener for starting a new check (resets all forms and hides results)
+        startNewCheckButton.addEventListener('click', () => {
+            if (!adRedirected) {
+                // First click: Redirect to a random ad in a new window
+                adRedirected = true;
+                const randomIndex = Math.floor(Math.random() * adLinks.length);
+                const randomAdLink = adLinks[randomIndex];
+                window.open(randomAdLink, '_blank'); // Open in new window/tab
+            } else {
+                // Second click: Reset form and stay on page
+                adRedirected = false; // Reset for next cycle
+                eligibilityForm.reset();
+                resultArea.classList.add('hidden');
+                startNewCheckButton.classList.add('hidden');
+                cnicError.classList.add('hidden');
+                captchaError.classList.add('hidden');
+                refreshCaptcha();
+            }
+        });
+
+        // Initialize content and captcha on page load
+        window.onload = async () => {
+            updateContent(currentLang); // Set initial language (Urdu)
+            refreshCaptcha(); // Generate initial captcha
+        };
+    </script>
+</body>
+</html>
